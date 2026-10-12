@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سامانه تعاملی یادگیری و شبیه‌سازی مقیاس‌های اندازه‌گیری - دانشگاه فرهنگیان</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts - Vazirmatn -->
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            800: '#3730a3',
+                            900: '#312e81',
+                        },
+                        farhangian: {
+                            blue: '#1e3a8a',
+                            gold: '#d97706',
+                            emerald: '#059669',
+                            rose: '#e11d48'
+                        }
+                    },
+                    fontFamily: {
+                        vazir: ['Vazirmatn', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background-color: #f8fafc;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        .tab-btn.active {
+            background-color: #ffffff;
+            color: #1e3a8a;
+            border-bottom: 3px solid #d97706;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body class="text-slate-800 bg-slate-50 min-h-screen flex flex-col justify-between selection:bg-indigo-600 selection:text-white custom-scrollbar">
+
+    <header class="bg-gradient-to-r from-blue-950 via-indigo-900 to-slate-900 text-white shadow-xl sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap justify-between items-center gap-4">
+            <div class="flex items-center space-x-3 space-x-reverse">
+                <div class="w-11 h-11 bg-amber-500 rounded-2xl flex items-center justify-center text-slate-950 font-black text-xl shadow-lg ring-2 ring-amber-300/50">
+                    <i class="fa-solid font-bold fa-ruler-combined"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg sm:text-xl font-bold tracking-tight">سامانه تعاملی مقیاس‌های اندازه‌گیری و کارگروهی</h1>
+                    <p class="text-xs text-indigo-200">سنجش و اندازه‌گیری آموزشی • ویژه ۶ گروه کاری دانشگاه فرهنگیان</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-2 space-x-reverse bg-indigo-950/60 p-1.5 rounded-xl border border-indigo-700/40 text-xs sm:text-sm">
+                <span class="px-2.5 py-1 bg-amber-500/20 text-amber-300 rounded-lg font-medium border border-amber-500/30">
+                    <i class="fa-solid fa-graduation-cap me-1"></i> دانشگاه فرهنگیان
+                </span>
+                <span class="px-2.5 py-1 bg-indigo-800/40 text-indigo-200 rounded-lg">استاد هوشی السادات</span>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <nav class="bg-slate-900/80 backdrop-blur border-t border-indigo-800/40 px-4">
+            <div class="max-w-7xl mx-auto flex space-x-1 space-x-reverse overflow-x-auto custom-scrollbar py-1">
+                <button onclick="switchTab('sim-scales')" id="tab-sim-scales" class="tab-btn active px-4 py-2.5 rounded-t-lg text-sm font-semibold transition-all duration-200 whitespace-nowrap flex items-center gap-2 text-slate-300 hover:text-white">
+                    <i class="fa-solid fa-flask text-amber-400"></i> آزمایشگاه چهار مقیاس
+                </button>
+                <button onclick="switchTab('sim-scenarios')" id="tab-sim-scenarios" class="tab-btn px-4 py-2.5 rounded-t-lg text-sm font-semibold transition-all duration-200 whitespace-nowrap flex items-center gap-2 text-slate-300 hover:text-white">
+                    <i class="fa-solid fa-users-gear text-emerald-400"></i> سناریوهای کارگروهی (۶ گروه)
+                </button>
+                <button onclick="switchTab('sim-grading')" id="tab-sim-grading" class="tab-btn px-4 py-2.5 rounded-t-lg text-sm font-semibold transition-all duration-200 whitespace-nowrap flex items-center gap-2 text-slate-300 hover:text-white">
+                    <i class="fa-solid fa-lock text-amber-400" id="teacher-lock-icon"></i> پنل نمره‌دهی و بازخورد استاد
+                </button>
+                <button onclick="switchTab('sim-math')" id="tab-sim-math" class="tab-btn px-4 py-2.5 rounded-t-lg text-sm font-semibold transition-all duration-200 whitespace-nowrap flex items-center gap-2 text-slate-300 hover:text-white">
+                    <i class="fa-solid fa-calculator text-blue-400"></i> حدود واقعی و گرد کردن
+                </button>
+                <button onclick="switchTab('sim-quiz')" id="tab-sim-quiz" class="tab-btn px-4 py-2.5 rounded-t-lg text-sm font-semibold transition-all duration-200 whitespace-nowrap flex items-center gap-2 text-slate-300 hover:text-white">
+                    <i class="fa-solid fa-list-check text-purple-400"></i> آزمون و خودارزیابی
+                </button>
+                <button onclick="switchTab('sim-summary')" id="tab-sim-summary" class="tab-btn px-4 py-2.5 rounded-t-lg text-sm font-semibold transition-all duration-200 whitespace-nowrap flex items-center gap-2 text-slate-300 hover:text-white">
+                    <i class="fa-solid fa-book-open text-rose-400"></i> خلاصه و ماتریس ویژگی‌ها
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full">
+
+        <section id="view-sim-scales" class="space-y-6">
+            <!-- Intro Card -->
+            <div class="bg-gradient-to-r from-indigo-900 to-blue-900 rounded-2xl p-6 text-white shadow-lg border border-indigo-700/50">
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                    <div>
+                        <span class="inline-block px-3 py-1 bg-amber-500/20 text-amber-300 rounded-full text-xs font-bold mb-2 border border-amber-400/30">
+                            آموزش تعاملی مبتنی بر سازنده‌گرایی
+                        </span>
+                        <h2 class="text-xl sm:text-2xl font-bold">آزمایشگاه تحلیل مقیاس‌های چهارگانه اندازه‌گیری</h2>
+                        <p class="text-indigo-200 text-sm mt-1 max-w-3xl leading-relaxed">
+                            بر اساس نظریه استیونس (۱۹۵۱)، مقیاس‌های اندازه‌گیری به چهار سطح **اسمی، ترتیبی، فاصله‌ای و نسبتی** تقسیم می‌شوند. با انتخاب هر مقیاس، عملیات مجاز آماری و ریاضی را به صورت زنده آزمایش کنید.
+                        </p>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur p-4 rounded-xl text-center min-w-[160px] border border-white/10 hidden sm:block">
+                        <span class="text-2xl font-black text-amber-400">۴</span>
+                        <span class="block text-xs text-indigo-100">سطح سلسله‌مراتبی</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scale Interactive Selector -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <button onclick="selectScaleCard('nominal')" id="card-scale-nominal" class="scale-card border-2 border-indigo-500 bg-white p-5 rounded-2xl shadow-sm text-right hover:shadow-md transition cursor-pointer relative overflow-hidden">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-lg">۱</span>
+                        <span class="text-xs bg-indigo-50 text-indigo-700 px-2 py-1 rounded-md font-semibold">ساده‌ترین سطح</span>
+                    </div>
+                    <h3 class="font-bold text-slate-800 text-lg">مقیاس اسمی</h3>
+                    <p class="text-xs text-slate-500 mt-1">Nominal Scale</p>
+                    <p class="text-xs text-slate-600 mt-2 line-clamp-2">صرفاً جهت اسم‌گذاری، برچسب‌زدن و طبقه بندی بدون ارزش کمی.</p>
+                </button>
+
+                <button onclick="selectScaleCard('ordinal')" id="card-scale-ordinal" class="scale-card border-2 border-slate-200 bg-white p-5 rounded-2xl shadow-sm text-right hover:shadow-md transition cursor-pointer relative overflow-hidden">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-lg">۲</span>
+                        <span class="text-xs bg-amber-50 text-amber-700 px-2 py-1 rounded-md font-semibold">رتبه‌بندی</span>
+                    </div>
+                    <h3 class="font-bold text-slate-800 text-lg">مقیاس ترتیبی</h3>
+                    <p class="text-xs text-slate-500 mt-1">Ordinal Scale</p>
+                    <p class="text-xs text-slate-600 mt-2 line-clamp-2">ترتیب و رتبه مشخص است اما فواصل بین رتبه‌ها نامشخص می‌باشد.</p>
+                </button>
+
+                <button onclick="selectScaleCard('interval')" id="card-scale-interval" class="scale-card border-2 border-slate-200 bg-white p-5 rounded-2xl shadow-sm text-right hover:shadow-md transition cursor-pointer relative overflow-hidden">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-lg">۳</span>
+                        <span class="text-xs bg-emerald-50 text-emerald-700 px-2 py-1 rounded-md font-semibold">فواصل مساوی</span>
+                    </div>
+                    <h3 class="font-bold text-slate-800 text-lg">مقیاس فاصله‌ای</h3>
+                    <p class="text-xs text-slate-500 mt-1">Interval Scale</p>
+                    <p class="text-xs text-slate-600 mt-2 line-clamp-2">فواصل مساوی مشخص است اما دارای صفر قراردادی (نه صفر مطلق) است.</p>
+                </button>
+
+                <button onclick="selectScaleCard('ratio')" id="card-scale-ratio" class="scale-card border-2 border-slate-200 bg-white p-5 rounded-2xl shadow-sm text-right hover:shadow-md transition cursor-pointer relative overflow-hidden">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="w-10 h-10 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center font-bold text-lg">۴</span>
+                        <span class="text-xs bg-rose-50 text-rose-700 px-2 py-1 rounded-md font-semibold">کامل‌ترین مقیاس</span>
+                    </div>
+                    <h3 class="font-bold text-slate-800 text-lg">مقیاس نسبتی</h3>
+                    <p class="text-xs text-slate-500 mt-1">Ratio Scale</p>
+                    <p class="text-xs text-slate-600 mt-2 line-clamp-2">دارای فواصل مساوی و صفر مطلق؛ تمام محاسبات ریاضی مجاز است.</p>
+                </button>
+            </div>
+
+            <!-- Dynamic Interactive Panel -->
+            <div class="bg-white rounded-2xl p-6 shadow-md border border-slate-200 space-y-6">
+                <div class="flex flex-wrap justify-between items-center border-b border-slate-100 pb-4 gap-2" id="scale-detail-header">
+                    <!-- Dynamic Header Content -->
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="space-y-4 bg-slate-50 p-4 rounded-xl border border-slate-200/80">
+                        <h4 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-list-check text-indigo-600"></i> ویژگی‌های بنیادی مقیاس
+                        </h4>
+                        <ul class="space-y-2 text-xs text-slate-700" id="scale-properties-list"></ul>
+                    </div>
+
+                    <div class="space-y-4 bg-slate-50 p-4 rounded-xl border border-slate-200/80">
+                        <h4 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-square-root-variable text-emerald-600"></i> عملیات مجاز ریاضی و آماری
+                        </h4>
+                        <div class="space-y-2" id="scale-operations-container"></div>
+                    </div>
+
+                    <div class="space-y-4 bg-slate-50 p-4 rounded-xl border border-slate-200/80">
+                        <h4 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-chalkboard-user text-amber-600"></i> کاربردها در مدارس و سنجش
+                        </h4>
+                        <div class="space-y-2 text-xs text-slate-700" id="scale-examples-container"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-sim-scenarios" class="space-y-6 hidden">
+            <div class="bg-gradient-to-r from-emerald-900 via-teal-900 to-slate-900 rounded-2xl p-6 text-white shadow-lg border border-emerald-700/50">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <span class="inline-block px-3 py-1 bg-emerald-500/20 text-emerald-300 rounded-full text-xs font-bold mb-2 border border-emerald-400/30">
+                            فعالیت گروهی ۶‌گانه کلاس درس
+                        </span>
+                        <h2 class="text-xl sm:text-2xl font-bold">استودیوی سناریوهای کارگروهی دانشجو-معلمان</h2>
+                        <p class="text-emerald-100 text-sm mt-1 max-w-3xl leading-relaxed">
+                            کلاس به **۶ گروه اختصاصی** تقسیم شده است. هر گروه روی سناریوی مشخص‌شده برای خود کلیک کرده، اسامی اعضا را ثبت کند و پس از تحلیل تحلیلی، نتایج را برای ارزیابی و نمره‌دهی استاد ارسال نمایند.
+                        </p>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur px-4 py-3 rounded-xl border border-white/20 text-center">
+                        <span class="block text-amber-400 font-bold text-lg" id="group-completion-badge">۰ از ۶ ثبت‌شده</span>
+                        <span class="text-[10px] text-emerald-200">وضعیت گروه‌های کلاس</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Group Menu List -->
+                <div class="space-y-3">
+                    <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-users text-emerald-600"></i> انتخاب گروه کاری (گروه ۱ تا ۶)
+                    </h3>
+                    
+                    <div id="scenarios-menu" class="space-y-2.5">
+                        <!-- JS populated with 6 Groups -->
+                    </div>
+                </div>
+
+                <!-- Group Scenario Interactive Workspace -->
+                <div class="lg:col-span-2 bg-white rounded-2xl p-6 shadow-md border border-slate-200 space-y-6">
+                    <div id="scenario-active-box" class="space-y-6">
+                        <!-- Dynamic scenario content -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-sim-grading" class="space-y-6 hidden">
+            <div class="bg-gradient-to-r from-amber-900 via-amber-950 to-slate-900 rounded-2xl p-6 text-white shadow-lg border border-amber-600/40">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <span class="inline-block px-3 py-1 bg-amber-500/20 text-amber-300 rounded-full text-xs font-bold mb-2 border border-amber-400/30">
+                            <i class="fa-solid fa-user-shield me-1"></i> ورود موفق استاد (منطقه حفاظت شده)
+                        </span>
+                        <h2 class="text-xl sm:text-2xl font-bold">پنل ثبت، بازخورد و نمره‌دهی استاد به کارگروه‌ها</h2>
+                        <p class="text-amber-100 text-sm mt-1 max-w-3xl leading-relaxed">
+                            در این بخش می‌توانید نتایج ثبت‌شده توسط اعضای گروه‌های ۶‌گانه را مشاهده کرده، نمره از ۲۰ دهید و بازخورد اختصاصی بنویسید.
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button onclick="changeTeacherPin()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold rounded-xl text-xs flex items-center gap-2 border border-amber-500/30">
+                            <i class="fa-solid fa-key"></i> تغییر رمز ورود استاد
+                        </button>
+                        <button onclick="lockTeacherPanel()" class="px-3.5 py-2 bg-rose-700 hover:bg-rose-800 text-white font-bold rounded-xl text-xs flex items-center gap-2 shadow">
+                            <i class="fa-solid fa-lock"></i> خروج و قفل پنل
+                        </button>
+                        <button onclick="window.print()" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl text-xs flex items-center gap-2 shadow">
+                            <i class="fa-solid fa-print"></i> چاپ / خروجی گزارش
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- List of 6 Groups Submissions -->
+            <div class="grid grid-cols-1 gap-6" id="grading-groups-container">
+                <!-- JS populated submission cards -->
+            </div>
+        </section>
+
+        <section id="view-sim-math" class="space-y-6 hidden">
+            <div class="bg-gradient-to-r from-blue-900 to-indigo-900 rounded-2xl p-6 text-white shadow-lg border border-blue-700/50">
+                <span class="inline-block px-3 py-1 bg-amber-500/20 text-amber-300 rounded-full text-xs font-bold mb-2 border border-amber-400/30">
+                    محاسبات عملی و الگوریتم‌های فصل دوم
+                </span>
+                <h2 class="text-xl sm:text-2xl font-bold">شبیه‌ساز حدود واقعی و گرد کردن اعداد (قاعده رونیون و هابر)</h2>
+                <p class="text-blue-100 text-sm mt-1 max-w-3xl leading-relaxed">
+                    متغیرهای پیوسته همواره تقریبی هستند. در این بخش الگوریتم دقیق **حدود واقعی اعداد** ($X \pm \frac{1}{2} \text{واحد}$) و قانون ویژه **گرد کردن زوج/فرد رقم پنج** را آزمایش کنید.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Simulator 1: Real Limits -->
+                <div class="bg-white rounded-2xl p-6 shadow-md border border-slate-200 space-y-4">
+                    <div class="flex items-center gap-3 border-b border-slate-100 pb-3">
+                        <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold">
+                            <i class="fa-solid fa-arrows-left-right-to-line"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-800 text-base">محاسبه‌گر حدود واقعی (Real Limits)</h3>
+                            <p class="text-xs text-slate-500">مخصوص متغیرهای پیوسته (مانند وزن، قد، زمان)</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">عدد اندازه‌گیری شده ($X$):</label>
+                            <input type="number" id="rl-input-number" value="61" step="any" class="w-full text-sm p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">دقت واحد اندازه‌گیری ($Unit$):</label>
+                            <select id="rl-input-unit" class="w-full text-sm p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
+                                <option value="1">۱ (اعداد صحیح مانند ۶۱ کیلوگرم)</option>
+                                <option value="0.1">۰.۱ (یک رقم اعشار مانند ۱.۵ متر)</option>
+                                <option value="0.01">۰.۰۱ (دو رقم اعشار)</option>
+                                <option value="100">۱۰۰ (واحدهای بزرگ مانند ۳۲,۰۰۰ کیلوگرم نهنگ)</option>
+                            </select>
+                        </div>
+                        <button onclick="calculateRealLimits()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs py-3 px-4 rounded-xl shadow transition">
+                            محاسبه حد واقعی پایین و بالا
+                        </button>
+                    </div>
+
+                    <div id="rl-result-box" class="p-4 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-2">
+                        <div class="flex justify-between items-center text-slate-700">
+                            <span>فرمول حدود واقعی:</span>
+                            <span class="font-mono bg-white px-2 py-1 rounded border">$X \pm \frac{1}{2} \text{Unit}$</span>
+                        </div>
+                        <div class="pt-2 border-t border-slate-200 grid grid-cols-2 gap-2 text-center">
+                            <div class="bg-blue-50 p-2.5 rounded-lg border border-blue-100">
+                                <span class="block text-[10px] text-blue-600 font-bold">حد واقعی پایین (LRL)</span>
+                                <span id="rl-lrl" class="text-sm font-black text-blue-900">۶۰.۵</span>
+                            </div>
+                            <div class="bg-indigo-50 p-2.5 rounded-lg border border-indigo-100">
+                                <span class="block text-[10px] text-indigo-600 font-bold">حد واقعی بالا (URL)</span>
+                                <span id="rl-url" class="text-sm font-black text-indigo-900">۶۱.۵</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Simulator 2: Advanced Rounding Rules -->
+                <div class="bg-white rounded-2xl p-6 shadow-md border border-slate-200 space-y-4">
+                    <div class="flex items-center gap-3 border-b border-slate-100 pb-3">
+                        <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold">
+                            <i class="fa-solid fa-calculator"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-800 text-base">دستگاه تعاملی گرد کردن (Runyon & Haber)</h3>
+                            <p class="text-xs text-slate-500">منطبق بر قوانین مندرج در صفحات ۱۹ و ۲۰ جزوه</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">ورود عدد اعشاری جهت گرد کردن:</label>
+                            <input type="text" id="round-input-val" value="6.545000" class="w-full text-sm p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none dir-ltr font-mono">
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">محل گرد کردن:</label>
+                                <select id="round-target-place" class="w-full text-xs p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-purple-500">
+                                    <option value="2">دو رقم اعشار (رقم دوم)</option>
+                                    <option value="1">یک رقم اعشار</option>
+                                    <option value="3">سه رقم اعشار</option>
+                                </select>
+                            </div>
+                            <div class="flex items-end">
+                                <button onclick="runRoundingSimulator()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs py-3 px-4 rounded-xl shadow transition">
+                                    تطبیق و گرد کردن
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="round-step-box" class="p-4 bg-purple-50/60 rounded-xl border border-purple-100 text-xs space-y-2"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-sim-quiz" class="space-y-6 hidden">
+            <div class="bg-gradient-to-r from-purple-900 to-indigo-900 rounded-2xl p-6 text-white shadow-lg border border-purple-700/50">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <span class="inline-block px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-xs font-bold mb-2 border border-purple-400/30">
+                            خودارزیابی و تست هوشمند
+                        </span>
+                        <h2 class="text-xl sm:text-2xl font-bold">آزمون خودارزیابی مفاهیم فصل دوم</h2>
+                        <p class="text-purple-100 text-sm mt-1">تست‌های استاندارد استخراج‌شده از پایان فصل دوم جزوه استاد هوشی السادات</p>
+                    </div>
+                    <div class="text-center bg-white/10 p-3 rounded-xl border border-white/20">
+                        <span id="quiz-score-display" class="text-2xl font-black text-amber-400">۰/۵</span>
+                        <span class="block text-[10px] text-purple-200">امتیاز شما</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="quiz-questions-list" class="space-y-6"></div>
+        </section>
+
+        <section id="view-sim-summary" class="space-y-6 hidden">
+            <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-blue-950 rounded-2xl p-6 text-white shadow-lg border border-slate-700">
+                <h2 class="text-xl sm:text-2xl font-bold">ماتریس جامع مقایسه مقیاس‌های اندازه‌گیری</h2>
+                <p class="text-slate-300 text-sm mt-1">جدول ۱-۲ جزوه درس سنجش - خلاصه کامل مقایسه مقیاس‌های اسمی، ترتیبی، فاصله‌ای و نسبتی</p>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden">
+                <div class="overflow-x-auto custom-scrollbar">
+                    <table class="w-full text-right text-xs">
+                        <thead class="bg-slate-900 text-white font-bold">
+                            <tr>
+                                <th class="p-4 border-b border-slate-700">نوع مقیاس</th>
+                                <th class="p-4 border-b border-slate-700">ترتیب</th>
+                                <th class="p-4 border-b border-slate-700">فواصل مساوی</th>
+                                <th class="p-4 border-b border-slate-700">صفر مطلق</th>
+                                <th class="p-4 border-b border-slate-700">عملیات مجاز آماری</th>
+                                <th class="p-4 border-b border-slate-700">عملیات مجاز ریاضی</th>
+                                <th class="p-4 border-b border-slate-700">مثال شاخص</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 text-slate-700">
+                            <tr class="hover:bg-slate-50">
+                                <td class="p-4 font-bold text-indigo-700">اسمی (Nominal)</td>
+                                <td class="p-4 text-center"><i class="fa-solid fa-xmark text-rose-500 text-base"></i></td>
+                                <td class="p-4 text-center"><i class="fa-solid fa-xmark text-rose-500 text-base"></i></td>
+                                <td class="p-4 text-center"><i class="fa-solid fa-xmark text-rose-500 text-base"></i></td>
+                                <td class="p-4">شمارش فراوانی، نما (مد)</td>
+                                <td class="p-4 text-rose-600 font-medium">هیچ‌یک از ۴ عمل اصلی</td>
+                                <td class="p-4">جنسیت، شماره پیراهن، نوع مدرسه</td>
+    <!-- Teacher Authentication Security Modal -->
+    <div id="teacher-auth-modal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-slate-200 space-y-5 text-right relative overflow-hidden">
+            <div class="w-16 h-16 bg-amber-100 text-amber-700 rounded-2xl flex items-center justify-center text-2xl mx-auto shadow-inner">
+                <i class="fa-solid fa-user-lock"></i>
+            </div>
+            
+            <div class="text-center space-y-1">
+                <h3 class="text-lg font-bold text-slate-900">احراز هویت و ورود استاد</h3>
+                <p class="text-xs text-slate-500 leading-relaxed">برای دسترسی به پنل نمره‌دهی و بازخورد، لطفاً رمز عبور استاد را وارد نمایید.</p>
+            </div>
+
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">رمز عبور استاد:</label>
+                    <input type="password" id="teacher-pin-input" placeholder="رمز عبور را وارد کنید..." class="w-full text-center text-lg font-bold tracking-widest p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 outline-none">
+                </div>
+                <div id="teacher-pin-error" class="hidden text-xs text-rose-600 bg-rose-50 p-2.5 rounded-lg border border-rose-200 text-center font-bold">
+                    <i class="fa-solid fa-triangle-exclamation me-1"></i> رمز عبور وارد شده اشتباه است!
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 pt-2">
+                <button onclick="verifyTeacherPin()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs py-3 px-4 rounded-xl shadow transition">
+                    تأیید و ورود به پنل
+                </button>
+                <button onclick="closeTeacherAuthModal()" class="w-1/3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs py-3 px-4 rounded-xl transition">
+                    انصراف
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 text-xs py-6 border-t border-slate-800 mt-10">
+        <div class="max-w-7xl mx-auto px-4 text-center space-y-2">
+            <p>سامانه تعاملی آموزش و شبیه‌سازی مقیاس‌های اندازه‌گیری • ویژه دانشجو-معلمان دانشگاه فرهنگیان</p>
+            <p class="text-slate-500">منبع: جزوه سنجش و اندازه‌گیری آموزشی (استاد سید علیرضا هوشی السادات)</p>
+        </div>
+    </footer>
+
+    <script>
+        // Data Structures for Scale Details
+        const SCALES_DATA = {
+            nominal: {
+                title: "مقیاس اسمی (Nominal)",
+                color: "indigo",
+                icon: "fa-tags",
+                badge: "پایین‌ترین سطح سنجش",
+                description: "از اعداد و نمادها صرفاً برای برچسب‌زدن، نام‌گذاری یا طبقه بندی افراد و اشیاء استفاده می‌شود بدون اینکه ارقام ارزش ریاضی داشته باشند.",
+                properties: [
+                    "فاقد ارزش عددی یا ارزش کمی واقعی.",
+                    "عدم وجود ترتیب معنایی بین گروه‌ها (گروه ۱ برتر از گروه ۲ نیست).",
+                    "رعایت قاعده عدم تداخل: به طبقات مختلف عدد یکسان و به یک طبقه عددهای مختلف داده نشود."
+                ],
+                operations: [
+                    { name: "شمارش فراوانی (Frequency)", status: true },
+                    { name: "تعیین نما / مد (Mode)", status: true },
+                    { name: "میانه و میانگین", status: false },
+                    { name: "چهار عمل اصلی ریاضی (+, -, ×, ÷)", status: false }
+                ],
+                examples: [
+                    "جنسیت: زن (۱)، مرد (۲)",
+                    "شماره پیراهن بازیکنان فوتبال",
+                    "نوع مدرسه: دولتی (۱)، غیردولتی (۲)"
+                ]
+            },
+            ordinal: {
+                title: "مقیاس ترتیبی (Ordinal)",
+                color: "amber",
+                icon: "fa-arrow-down-short-wide",
+                badge: "رتبه‌بندی بدون فواصل مشخص",
+                description: "افراد یا اشیاء بر اساس یک صفت مشخص از بزرگ به کوچک یا بالعکس مرتب می‌شوند، اما فاصله بین نقاط مقیاس برابر یا مشخص نیست.",
+                properties: [
+                    "دارای ترتیب و رتبه‌بندی مشخص.",
+                    "فواصل بین رتبه‌ها نامشخص و نابرابر است.",
+                    "عدم وجود مبدأ و صفر مطلق."
+                ],
+                operations: [
+                    { name: "شمارش فراوانی و نما (Mode)", status: true },
+                    { name: "محاسبه میانه (Median) و درصدها", status: true },
+                    { name: "ضریب همبستگی رتبه‌ای اسپیرمن", status: true },
+                    { name: "محاسبه میانگین و انحراف معیار رسمی", status: false }
+                ],
+                examples: [
+                    "رتبه‌بندی دانش‌آموزان بر اساس نمره",
+                    "طیف لیکرت (کاملاً مخالفم تا کاملاً موافقم)",
+                    "پرسشنامه استرس زندگی هولمز و راهه"
+                ]
+            },
+            interval: {
+                title: "مقیاس فاصله‌ای (Interval)",
+                color: "emerald",
+                icon: "fa-ruler-horizontal",
+                badge: "فواصل مساوی + صفر قراردادی",
+                description: "رتبه افراد مشخص بوده و فواصل بین واحدها برابر است، اما فاقد صفر مطلق می‌باشد.",
+                properties: [
+                    "فواصل بین نقاط متوالی کاملاً برابر است.",
+                    "دارای صفر قراردادی (نه صفر مطلق).",
+                    "نسبت‌ها در این مقیاس معنی‌دار نیستند."
+                ],
+                operations: [
+                    { name: "تمام شاخص‌های آماری (میانگین، انحراف معیار)", status: true },
+                    { name: "ضریب همبستگی پیرسون", status: true },
+                    { name: "عملیات جمع و تفریق", status: true },
+                    { name: "ضرب و تقسیم (محاسبه نسبت‌ها)", status: false }
+                ],
+                examples: [
+                    "دمای هوا (سانتی‌گراد و فارنهایت)",
+                    "نمرات آزمون هوشبهر (IQ)",
+                    "پیشرفت تحصیلی در آزمون‌های استاندارد"
+                ]
+            },
+            ratio: {
+                title: "مقیاس نسبتی (Ratio)",
+                color: "rose",
+                icon: "fa-scale-balanced",
+                badge: "کامل‌ترین سطح اندازه‌گیری",
+                description: "علاوه بر رتبه و فواصل مساوی، دارای صفر مطلق (حقیقی) است.",
+                properties: [
+                    "دارای صفر مطلق یا صفر واقعی.",
+                    "فواصل مساوی در تمام طول مقیاس.",
+                    "نسبت‌ها معنای حقیقی دارند."
+                ],
+                operations: [
+                    { name: "تمامی شاخص‌های آماری توصیفی و استنباطی", status: true },
+                    { name: "تمامی عملیات ریاضی (+, -, ×, ÷)", status: true },
+                    { name: "محاسبه نسبت‌ها و درصدهای واقعی", status: true }
+                ],
+                examples: [
+                    "وزن، قد و طول فیزیکی",
+                    "زمان پاسخ‌دهی (واکنش) در آزمایش‌ها",
+                    "تعداد اشتباهات در آزمون"
+                ]
+            }
+        };
+
+        const GROUP_SCENARIOS = [
+            {
+                groupId: 1,
+                title: "سناریوی کارگروه ۱: مقیاس اسمی و خطا در گزارش‌های کارنامه",
+                concept: "مقیاس اسمی و طبقه بندی داده‌ها",
+                context: "یک معاون آموزشی در مدرسه برای گزارش مدیریتی به اداره، نوع مدارس دانش‌آموزان را کدگذاری کرده است: (دولتی=۱، غیردولتی=۲، شاهد=۳). وی در گزارش نوشته است: «میانگین نوع مدرسه در این منطقه ۲.۱ می‌باشد و مدرسه شاهد ۳ برابر برتر از مدرسه دولتی ۱ است.»",
+                question: "این گزارش مدیریتی با چه چالش‌ها و خطاهای علمی در سنجش مواجه است؟",
+                options: [
+                    { id: 'a', text: "کدگذاری اسمی فقط برچسب است و انجام میانگین‌گیری و نسبت‌گیری روی آن کاملاً نادرست است.", correct: true, feedback: "عالی! اعداد ۱، ۲ و ۳ در مقیاس اسمی ارزش ریاضی ندارند و میانگین یا نسبت روی آن‌ها بی‌معنی است." },
+                    { id: 'b', text: "این گزارش کاملاً صحیح است چون از اعداد استفاده شده است.", correct: false, feedback: "نادرست! اعداد در مقیاس اسمی ارزش ریاضی ندارند." },
+                    { id: 'c', text: "فقط محاسبه میانگین درست است اما نسبت‌گیری اشتباه است.", correct: false, feedback: "اشتباه است؛ هر دو عملیات غیرمجاز هستند." }
+                ]
+            },
+            {
+                groupId: 2,
+                title: "سناریوی کارگروه ۲: مقیاس ترتیبی و طیف لیکرت (بحث بروگاتا و بوهرنستد)",
+                concept: "مقیاس ترتیبی به عنوان فاصله‌ای ناکامل",
+                context: "معلمی پرسشنامه رضایت از تدریس را در طیف ۵ درجه‌ای لیکرت (۱=کاملاً ناراضی تا ۵=کاملاً راضی) اجرا کرده و میانگین را ۳.۸ به دست آورده است. همکار او می‌گوید: «لیکرت ترتیبی است و حق میانگین‌گیری نداری!»",
+                question: "مطابق صفحه ۱۰ جزوه درس سنجش، تحلیل روان‌سنجی استاد در مورد میانگین‌گیری از داده‌های ترتیبی چیست؟",
+                options: [
+                    { id: 'a', text: "طیف لیکرت ترتیبی است اما بر اساس نظر بروگاتا و بوهرنستد می‌توان آن را «فاصله‌ای ناکامل» فرض کرد و با احتیاط میانگین گرفت.", correct: true, feedback: "درست است! در علوم انسانی متغیرهای ترتیبی گاهی فاصله‌ای ناکامل تلقی شده و با احتیاط تحلیل می‌شوند." },
+                    { id: 'b', text: "لیکرت یک مقیاس نسبتی کامل است و هیچ محدودیتی ندارد.", correct: false, feedback: "نادرست! لیکرت فواصل مساوی و صفر مطلق ندارد." },
+                    { id: 'c', text: "تحت هیچ شرایطی نباید برای طیف لیکرت میانگین یا انحراف معیار محاسبه کرد.", correct: false, feedback: "پاسخ دقیق نیست؛ در پژوهش‌های رفتاری با احتیاط انجام می‌شود." }
+                ]
+            },
+            {
+                groupId: 3,
+                title: "سناریوی کارگروه ۳: مقیاس فاصله‌ای و تحلیل نمرات هوش (IQ)",
+                concept: "مقیاس فاصله‌ای و عدم وجود صفر مطلق",
+                context: "در یک آزمون استاندارد هوش، علی نمره IQ برابر ۱۲۰ و رضا نمره IQ برابر ۶۰ دریافت کرده است. معلم کارنامه به مشاور می‌گوید: «علی دقیقاً ۲ برابر رضا هوش دارد و اگر کسی نمره ۰ بگیرد کاملاً بی‌هوش است!»",
+                question: "تحلیل تحلیلی گروه شما از گفته‌های معلم چیست؟",
+                options: [
+                    { id: 'a', text: "هر دو ادعای معلم اشتباه است؛ هوش مقیاس فاصله‌ای با صفر قراردادی است، پس نسبت‌ها معنی ندارند و نمره صفر به معنی عدم وجود هوش نیست.", correct: true, feedback: "آفرین! مقیاس فاصله‌ای فاقد صفر مطلق است، بنابراین نسبت‌گیری (۲ برابر) و ادعای بی‌هوشی مطلق علمی نیست." },
+                    { id: 'b', text: "هر دو ادعای معلم کاملاً صحیح است.", correct: false, feedback: "نادرست! نمره IQ صفر مطلق ندارد." },
+                    { id: 'c', text: "ادعای دو برابر بودن صحیح است اما ادعای صفر مطلق غلط است.", correct: false, feedback: "نادرست! نسبت‌ها در مقیاس فاصله‌ای معنی‌دار نیستند." }
+                ]
+            },
+            {
+                groupId: 4,
+                title: "سناریوی کارگروه ۴: مقیاس نسبتی و آزمون‌های فیزیکی-روان‌شناختی",
+                concept: "مقیاس نسبتی و جواز کلیه عملیات",
+                context: "در یک پژوهش آموزشی، زمان پاسخ‌دهی (بر حسب ثانیه) و تعداد غلط‌های دانش‌آموزان در یک آزمون خوانداری اندازه‌گیری شده است. دانش‌آموز A در ۲۰ ثانیه و دانش‌آموز B در ۴۰ ثانیه پاسخ داده است.",
+                question: "نوع مقیاس اندازه‌گیری این دو متغیر و جواز عملیات ریاضی روی آن‌ها چگونه است؟",
+                options: [
+                    { id: 'a', text: "هر دو نسبتی هستند؛ زیرا زمان و تعداد غلط دارای صفر مطلق هستند و می‌توان گفت زمان پاسخ‌دهی A نصف B است.", correct: true, feedback: "بسیار عالی! زمان و تعداد خطای آزمون متغیرهای نسبتی بوده و نسبت‌ها در آن‌ها کاملاً معنای فیزیکی دارند." },
+                    { id: 'b', text: "هر دو متغیر ترتیبی هستند و نمی‌توان نسبت آن‌ها را مقایسه کرد.", correct: false, feedback: "اشتباه است؛ زمان و تعداد خطا دارای واحد یکسان و صفر واقعی هستند." },
+                    { id: 'c', text: "زمان فاصله‌ای است ولی تعداد غلط اسمی است.", correct: false, feedback: "اشتباه است." }
+                ]
+            },
+            {
+                groupId: 5,
+                title: "سناریوی کارگروه ۵: متغیرهای پیوسته vs گسسته و متغیر زیربنایی",
+                concept: "تاثیر متغیر زیربنایی بر نوع مقیاس (صفحه ۱۴ جزوه)",
+                context: "دما سنجش کلاس درس را یک بار به عنوان «شاخص فعالیت مولکولی فیزیکی» و بار دیگر به عنوان «احساس آسایش افراد» اندازه‌گیری می‌کنیم. همچنین تعداد فرزندان خانواده دانش‌آموزان ثبت شده است.",
+                question: "نوع مقیاس‌های این سه حالت بر اساس متغیر زیربنایی به چه ترتیب است؟",
+                options: [
+                    { id: 'a', text: "دما در حالت فیزیکی: فاصله‌ای، در حالت احساس آسایش: ترتیبی / تعداد فرزندان: گسسته و نسبتی", correct: true, feedback: "دقیقاً درست است! مطابق صفحه ۱۴ جزوه، متغیر زیربنایی نوع مقیاس را تعیین می‌کند نه صرف اعداد." },
+                    { id: 'b', text: "دما در هر دو حالت نسبتی است و تعداد فرزندان پیوسته است.", correct: false, feedback: "نادرست! دمای سانتی‌گراد صفر مطلق ندارد و تعداد فرزند نمی‌تواند اعشاری باشد." },
+                    { id: 'c', text: "هر سه متغیر اسمی هستند.", correct: false, feedback: "اشتباه است." }
+                ]
+            },
+            {
+                groupId: 6,
+                title: "سناریوی کارگروه ۶: حدود واقعی و گرد کردن نمرات با قاعده رونیون و هابر",
+                concept: "الگوریتم گرد کردن فرد/زوج و حدود واقعی (صفحات ۱۹ و ۲۰ جزوه)",
+                context: "معلمی می‌خواهد نمره‌کل ۵ دانش‌آموز را تا دو رقم اعشار گرد کند: نمرات عبارتند از (6.545000) و (6.535000). همچنین حد واقعی نمره وزن ۶۱ کیلوگرم مطرح شده است.",
+                question: "نتیجه گرد کردن این دو نمره بر اساس قاعده رقم ۵ (زوج/فرد) و حدود واقعی وزن چیست؟",
+                options: [
+                    { id: 'a', text: "6.545000 به 6.54 گرد می‌شود (چون ۴ زوج است) / 6.535000 به 6.54 گرد می‌شود (چون ۳ فرد است) / حدود واقعی ۶۱: [۶۰.۵ تا ۶۱.۵]", correct: true, feedback: "آفرین فوق‌العاده است! مطابق قاعده رونیون و هابر، رقم ۵ اگر قبل آن زوج باشد تغییر نمی‌کند و اگر فرد باشد ۱ واحد اضافه می‌شود تا زوج گردد." },
+                    { id: 'b', text: "هر دو عدد به ۶.۵۵ گرد می‌شوند.", correct: false, feedback: "نادرست! قاعده زوج/فرد در جزوه رعایت نشده است." },
+                    { id: 'c', text: "6.545000 به 6.55 و 6.535000 به 6.53 گرد می‌شوند.", correct: false, feedback: "اشتباه است." }
+                ]
+            }
+        ];
+
+        // Self-Assessment Quiz Questions
+        const QUIZ_QUESTIONS = [
+            {
+                q: "کدام عامل نوع مقیاس اندازه‌گیری را در سنجش تعیین می‌کند؟",
+                options: ["اعداد و ارقام به دست آمده", "متغیر مورد سنجش و نحوه اندازه‌گیری", "تعداد دانش‌آموزان کلاس", "فرمول‌های آماری"],
+                ans: 1,
+                explanation: "بر اساس سوال ۱ صفحه ۲۰ جزوه، متغیر مورد سنجش و چگونگی اندازه‌گیری تعیین‌کننده نوع مقیاس است."
+            },
+            {
+                q: "در کدام مقیاس اندازه‌گیری انجام تمامی عملیات آماری و تمامی عملیات ریاضی مجاز است؟",
+                options: ["مقیاس اسمی", "مقیاس ترتیبی", "مقیاس فاصله‌ای", "مقیاس نسبتی"],
+                ans: 3,
+                explanation: "مقیاس نسبتی به دلیل داشتن فواصل مساوی و صفر مطلق، کامل‌ترین مقیاس است."
+            },
+            {
+                q: "اگر برای دسته‌بندی دانش‌آموزان یک ناحیه پسران را با ۱ و دختران را با ۲ نشان دهیم، این سطح از اندازه‌گیری چیست؟",
+                options: ["اسمی", "ترتیبی", "فاصله‌ای", "نسبتی"],
+                ans: 0,
+                explanation: "این حالت صرفاً نام‌گذاری و طبقه بندی است که خصوصیت مقیاس اسمی می‌باشد."
+            },
+            {
+                q: "عدد ۰.۰۲۵۰۰ پس از گرد کردن به دو رقم اعشار بر اساس قاعده زوج/فرد (رونیون و هابر) چند می‌شود؟",
+                options: ["۰.۰۲", "۰.۰۳", "۰.۰۲۵", "۰.۰۱"],
+                ans: 0,
+                explanation: "بعد از رقم ۲ عدد ۵ آمده است. رقم قبل از ۵ عدد زوج (۲) است، بنابراین تغییر نمی‌کند و ۰.۰۲ می‌شود."
+            },
+            {
+                q: "کدام یک از متغیرهای زیر نمونه‌ای از مقیاس پیوسته است؟",
+                options: ["تعداد فرزندان خانواده", "قد دانش‌آموزان", "تعداد سوالات درست آزمون", "تعداد مدارس یک منطقه"],
+                ans: 1,
+                explanation: "قد می‌تواند هر ارزش اعشاری را بین دو عدد بپذیرد، پس مقیاس پیوسته است."
+            }
+        ];
+
+        let currentActiveScale = 'nominal';
+        let currentGroupIndex = 0;
+        let selectedScenarioAnswers = {};
+        let quizUserAnswers = {};
+        
+        let isTeacherAuthenticated = false;
+        const DEFAULT_TEACHER_PIN = "1403";
+
+        function getTeacherPin() {
+            return localStorage.getItem('farhangian_teacher_pin') || DEFAULT_TEACHER_PIN;
+        }
+
+        function switchTab(tabId) {
+            if (tabId === 'sim-grading' && !isTeacherAuthenticated) {
+                openTeacherAuthModal();
+                return;
+            }
+
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            const activeTabBtn = document.getElementById(`tab-${tabId}`);
+            if(activeTabBtn) activeTabBtn.classList.add('active');
+
+            ['sim-scales', 'sim-scenarios', 'sim-grading', 'sim-math', 'sim-quiz', 'sim-summary'].forEach(id => {
+                const viewEl = document.getElementById(`view-${id}`);
+                if (viewEl) viewEl.classList.add('hidden');
+            });
+            const targetView = document.getElementById(`view-${tabId}`);
+            if (targetView) targetView.classList.remove('hidden');
+
+            if (tabId === 'sim-scenarios') {
+                renderGroupScenariosMenu();
+                loadGroupScenario(currentGroupIndex);
+            } else if (tabId === 'sim-grading') {
+                renderTeacherGradingPanel();
+            }
+        }
+
+        function openTeacherAuthModal() {
+            const modal = document.getElementById('teacher-auth-modal');
+            const errBox = document.getElementById('teacher-pin-error');
+            const pinInput = document.getElementById('teacher-pin-input');
+            if (modal) modal.classList.remove('hidden');
+            if (errBox) errBox.classList.add('hidden');
+            if (pinInput) {
+                pinInput.value = '';
+                pinInput.focus();
+            }
+        }
+
+        function closeTeacherAuthModal() {
+            const modal = document.getElementById('teacher-auth-modal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function verifyTeacherPin() {
+            const pinInput = document.getElementById('teacher-pin-input').value.trim();
+            const correctPin = getTeacherPin();
+            const errBox = document.getElementById('teacher-pin-error');
+
+            if (pinInput === correctPin) {
+                isTeacherAuthenticated = true;
+                closeTeacherAuthModal();
+                
+                // Update lock icon indicator
+                const lockIcon = document.getElementById('teacher-lock-icon');
+                if (lockIcon) {
+                    lockIcon.className = "fa-solid fa-lock-open text-emerald-400";
+                }
+
+                switchTab('sim-grading');
+            } else {
+                if (errBox) errBox.classList.remove('hidden');
+            }
+        }
+
+        function lockTeacherPanel() {
+            isTeacherAuthenticated = false;
+            const lockIcon = document.getElementById('teacher-lock-icon');
+            if (lockIcon) {
+                lockIcon.className = "fa-solid fa-lock text-amber-400";
+            }
+            switchTab('sim-scenarios');
+            alert('پنل استاد با موفقیت قفل شد.');
+        }
+
+        function changeTeacherPin() {
+            const currentPin = prompt('لطفاً رمز عبور فعلی استاد را وارد کنید:');
+            if (currentPin !== getTeacherPin()) {
+                alert('رمز عبور فعلی نادرست است!');
+                return;
+            }
+
+            const newPin = prompt('رمز عبور جدید استاد را وارد کنید:');
+            if (newPin && newPin.trim().length >= 3) {
+                localStorage.setItem('farhangian_teacher_pin', newPin.trim());
+                alert('رمز عبور جدید استاد با موفقیت ذخیره شد.');
+            } else {
+                alert('رمز عبور باید حداقل ۳ کاراکتر باشد.');
+            }
+        }
+
+        function selectScaleCard(scaleKey) {
+            currentActiveScale = scaleKey;
+            
+            document.querySelectorAll('.scale-card').forEach(card => {
+                card.classList.remove('border-indigo-500', 'border-amber-500', 'border-emerald-500', 'border-rose-500');
+                card.classList.add('border-slate-200');
+            });
+
+            const currentCard = document.getElementById(`card-scale-${scaleKey}`);
+            if (currentCard) {
+                if (scaleKey === 'nominal') currentCard.classList.replace('border-slate-200', 'border-indigo-500');
+                if (scaleKey === 'ordinal') currentCard.classList.replace('border-slate-200', 'border-amber-500');
+                if (scaleKey === 'interval') currentCard.classList.replace('border-slate-200', 'border-emerald-500');
+                if (scaleKey === 'ratio') currentCard.classList.replace('border-slate-200', 'border-rose-500');
+            }
+
+            renderScaleDetails();
+        }
+
+        function renderScaleDetails() {
+            const data = SCALES_DATA[currentActiveScale];
+            
+            document.getElementById('scale-detail-header').innerHTML = `
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-lg">
+                        <i class="fa-solid ${data.icon}"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-lg">${data.title}</h3>
+                        <p class="text-xs text-slate-500">${data.description}</p>
+                    </div>
+                </div>
+                <span class="px-3 py-1 bg-slate-100 text-slate-700 font-bold rounded-lg text-xs border border-slate-200">
+                    ${data.badge}
+                </span>
+            `;
+
+            document.getElementById('scale-properties-list').innerHTML = data.properties.map(p => `
+                <li class="flex items-start gap-2">
+                    <i class="fa-solid fa-circle-check text-emerald-500 mt-1"></i>
+                    <span>${p}</span>
+                </li>
+            `).join('');
+
+            document.getElementById('scale-operations-container').innerHTML = data.operations.map(op => `
+                <div class="flex items-center justify-between p-2 rounded-lg text-xs font-medium ${op.status ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-rose-50 text-rose-800 border border-rose-200 opacity-60'}">
+                    <span>${op.name}</span>
+                    <i class="fa-solid ${op.status ? 'fa-check text-emerald-600' : 'fa-xmark text-rose-600'}"></i>
+                </div>
+            `).join('');
+
+            document.getElementById('scale-examples-container').innerHTML = data.examples.map(ex => `
+                <div class="p-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-700 flex items-center gap-2">
+                    <i class="fa-solid fa-graduation-cap text-indigo-500"></i>
+                    <span>${ex}</span>
+                </div>
+            `).join('');
+        }
+
+        function renderGroupScenariosMenu() {
+            const menu = document.getElementById('scenarios-menu');
+            if (!menu) return;
+
+            const savedSubmissions = getGroupSubmissions();
+
+            menu.innerHTML = GROUP_SCENARIOS.map((sc, index) => {
+                const isSubmitted = !!savedSubmissions[sc.groupId];
+                return `
+                    <button onclick="loadGroupScenario(${index})" class="w-full text-right p-3.5 rounded-xl border text-xs transition flex items-center justify-between ${currentGroupIndex === index ? 'bg-emerald-50 border-emerald-500 text-emerald-950 font-bold shadow-sm' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'}">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-6 h-6 rounded-lg font-bold flex items-center justify-center text-[10px] ${isSubmitted ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-700'}">${sc.groupId}</span>
+                            <span class="line-clamp-1">گروه ${sc.groupId}: ${sc.concept}</span>
+                        </div>
+                        ${isSubmitted ? '<span class="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">ثبت شده</span>' : '<i class="fa-solid fa-chevron-left text-slate-400 text-[10px]"></i>'}
+                    </button>
+                `;
+            }).join('');
+
+            updateGroupCountBadge();
+        }
+
+        function updateGroupCountBadge() {
+            const saved = getGroupSubmissions();
+            const count = Object.keys(saved).length;
+            const badge = document.getElementById('group-completion-badge');
+            if (badge) badge.textContent = `${count} از ۶ ثبت‌شده`;
+        }
+
+        function loadGroupScenario(index) {
+            currentGroupIndex = index;
+            renderGroupScenariosMenu();
+
+            const sc = GROUP_SCENARIOS[index];
+            const box = document.getElementById('scenario-active-box');
+            if (!box) return;
+
+            const savedSubmissions = getGroupSubmissions();
+            const existingSub = savedSubmissions[sc.groupId] || {};
+
+            box.innerHTML = `
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span class="px-3 py-1 bg-emerald-100 text-emerald-800 font-bold rounded-lg text-xs">سناریوی اختصاصی کارگروه شماره ${sc.groupId}</span>
+                        <span class="text-xs text-slate-500 font-medium"><i class="fa-solid fa-book me-1"></i> فصل دوم: ${sc.concept}</span>
+                    </div>
+                    <h3 class="font-bold text-slate-800 text-base sm:text-lg">${sc.title}</h3>
+                    <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 leading-relaxed space-y-2">
+                        <p class="font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-chalkboard text-emerald-600"></i> شرح موقعیت کاربردی کلاس درس:</p>
+                        <p class="text-slate-700 leading-loose">${sc.context}</p>
+                    </div>
+                </div>
+
+                <!-- Form for Group Members -->
+                <div class="bg-indigo-50/60 p-4 rounded-xl border border-indigo-100 space-y-3">
+                    <label class="block text-xs font-bold text-indigo-950">
+                        <i class="fa-solid fa-user-pen text-indigo-600 me-1"></i> اسامی اعضای کارگروه ${sc.groupId} (با ویرگول جدا کنید):
+                    </label>
+                    <input type="text" id="group-members-input" value="${existingSub.members || ''}" placeholder="مثلاً: علی رضایی، مریم محمدی، سارا کاظمی" class="w-full text-xs p-3 bg-white border border-indigo-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+
+                <!-- Multiple Choice Question -->
+                <div class="space-y-3">
+                    <p class="font-bold text-slate-800 text-xs sm:text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-circle-question text-amber-600"></i> سوال تحلیلی سناریو: ${sc.question}
+                    </p>
+                    <div class="space-y-2">
+                        ${sc.options.map(opt => {
+                            const isSelected = existingSub.selectedOption === opt.id;
+                            return `
+                                <button onclick="selectGroupScenarioOption('${opt.id}')" id="opt-btn-${opt.id}" class="w-full text-right p-3.5 rounded-xl border text-xs transition flex items-start gap-2.5 ${isSelected ? 'bg-indigo-100 border-indigo-500 text-indigo-950 font-bold' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'}">
+                                    <span class="w-5 h-5 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">${opt.id.toUpperCase()}</span>
+                                    <span class="leading-relaxed">${opt.text}</span>
+                                </button>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+
+                <!-- Group Reasoning Textarea -->
+                <div class="space-y-2">
+                    <label class="block text-xs font-bold text-slate-800">
+                        <i class="fa-solid fa-comments text-emerald-600 me-1"></i> استدلال و حاصل بحث گروهی (جمع‌بندی کار گروهی جهت ارائه به استاد):
+                    </label>
+                    <textarea id="group-reasoning-input" rows="4" placeholder="استدلال نهایی کارگروه خود را بر اساس صفحات جزوه استاد هوشی السادات شرح دهید..." class="w-full text-xs p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none leading-relaxed">${existingSub.reasoning || ''}</textarea>
+                </div>
+
+                <!-- Submission Button -->
+                <button onclick="submitGroupWork(${sc.groupId})" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-3.5 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i> ثبت نهایی پاسخ گروه ${sc.groupId} و ارسال به پنل استاد
+                </button>
+
+                <!-- Feedback Box -->
+                <div id="group-submission-feedback" class="${existingSub.submitted ? '' : 'hidden'} p-4 rounded-xl text-xs ${existingSub.submitted ? 'bg-emerald-50 border border-emerald-300 text-emerald-950' : ''}">
+                    ${existingSub.submitted ? `<p class="font-bold flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-600"></i> پاسخ گروه ${sc.groupId} با موفقیت ثبت شده است.</p>` : ''}
+                </div>
+            `;
+        }
+
+        function selectGroupScenarioOption(optId) {
+            const sc = GROUP_SCENARIOS[currentGroupIndex];
+            selectedScenarioAnswers[sc.groupId] = optId;
+
+            sc.options.forEach(o => {
+                const btn = document.getElementById(`opt-btn-${o.id}`);
+                if (btn) btn.className = "w-full text-right p-3.5 rounded-xl border text-xs transition flex items-start gap-2.5 bg-white border-slate-200 text-slate-700 hover:bg-slate-50";
+            });
+
+            const selBtn = document.getElementById(`opt-btn-${optId}`);
+            if (selBtn) selBtn.className = "w-full text-right p-3.5 rounded-xl border text-xs transition flex items-start gap-2.5 bg-indigo-100 border-indigo-500 text-indigo-950 font-bold";
+        }
+
+        function submitGroupWork(groupId) {
+            const members = document.getElementById('group-members-input').value.trim();
+            const reasoning = document.getElementById('group-reasoning-input').value.trim();
+            const selectedOpt = selectedScenarioAnswers[groupId] || (getGroupSubmissions()[groupId] || {}).selectedOption;
+
+            if (!members) {
+                alert('لطفاً اسامی اعضای کارگروه را وارد نمایید.');
+                return;
+            }
+
+            if (!selectedOpt) {
+                alert('لطفاً گزینه پاسخ تحلیلی سناریو را انتخاب نمایید.');
+                return;
+            }
+
+            const sc = GROUP_SCENARIOS.find(s => s.groupId === groupId);
+            const optObj = sc.options.find(o => o.id === selectedOpt);
+
+            const submissionData = {
+                groupId: groupId,
+                concept: sc.concept,
+                title: sc.title,
+                members: members,
+                selectedOption: selectedOpt,
+                optionText: optObj ? optObj.text : '',
+                isCorrect: optObj ? optObj.correct : false,
+                autoFeedback: optObj ? optObj.feedback : '',
+                reasoning: reasoning,
+                submittedAt: new Date().toLocaleTimeString('fa-IR') + ' - ' + new Date().toLocaleDateString('fa-IR'),
+                submitted: true
+            };
+
+            const allSubs = getGroupSubmissions();
+            allSubs[groupId] = submissionData;
+            localStorage.setItem('farhangian_group_submissions', JSON.stringify(allSubs));
+
+            const fbBox = document.getElementById('group-submission-feedback');
+            fbBox.classList.remove('hidden');
+            fbBox.className = "p-4 rounded-xl text-xs bg-emerald-50 border border-emerald-300 text-emerald-950 space-y-2";
+            fbBox.innerHTML = `
+                <p class="font-bold flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-600"></i> پاسخ کارگروه ${groupId} با موفقیت ثبت گردید!</p>
+                <p><strong>بازخورد علمی سیستم:</strong> ${optObj.feedback}</p>
+            `;
+
+            renderGroupScenariosMenu();
+        }
+
+        function getGroupSubmissions() {
+            try {
+                return JSON.parse(localStorage.getItem('farhangian_group_submissions')) || {};
+            } catch (e) {
+                return {};
+            }
+        }
+
+        function renderTeacherGradingPanel() {
+            const container = document.getElementById('grading-groups-container');
+            if (!container) return;
+
+            const savedSubs = getGroupSubmissions();
+
+            container.innerHTML = GROUP_SCENARIOS.map(sc => {
+                const sub = savedSubs[sc.groupId];
+                if (!sub) {
+                    return `
+                        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <span class="w-7 h-7 bg-slate-100 text-slate-700 font-bold rounded-lg flex items-center justify-center text-xs">${sc.groupId}</span>
+                                    <h3 class="font-bold text-slate-800 text-sm">کارگروه ${sc.groupId}: ${sc.title}</h3>
+                                </div>
+                                <p class="text-xs text-slate-500 mt-1 me-2">مفهوم: ${sc.concept}</p>
+                            </div>
+                            <span class="px-3 py-1 bg-amber-50 text-amber-700 font-bold rounded-lg text-xs border border-amber-200">
+                                <i class="fa-solid fa-clock me-1"></i> در انتظار ثبت پاسخ گروه
+                            </span>
+                        </div>
+                    `;
+                }
+
+                return `
+                    <div class="bg-white rounded-2xl p-6 border-2 border-emerald-500/40 shadow-md space-y-4">
+                        <div class="flex flex-wrap justify-between items-center border-b border-slate-100 pb-3 gap-2">
+                            <div class="flex items-center gap-2">
+                                <span class="w-8 h-8 bg-emerald-600 text-white font-black rounded-xl flex items-center justify-center text-sm">${sc.groupId}</span>
+                                <div>
+                                    <h3 class="font-bold text-slate-900 text-base">نتایج کارگروه ${sc.groupId}: ${sc.title}</h3>
+                                    <p class="text-xs text-slate-500">زمان ثبت: ${sub.submittedAt}</p>
+                                </div>
+                            </div>
+                            <span class="px-3 py-1 bg-emerald-100 text-emerald-800 font-bold rounded-lg text-xs">
+                                <i class="fa-solid fa-check-circle me-1"></i> پاسخ ثبت شده
+                            </span>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                            <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-1">
+                                <span class="font-bold text-slate-800 block"><i class="fa-solid fa-users text-indigo-600 me-1"></i> اعضای گروه:</span>
+                                <p class="text-slate-700">${sub.members}</p>
+                            </div>
+                            <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-1">
+                                <span class="font-bold text-slate-800 block"><i class="fa-solid fa-check-double text-emerald-600 me-1"></i> گزینه انتخابی:</span>
+                                <p class="text-slate-700">گزینه (${sub.selectedOption.toUpperCase()}): ${sub.optionText}</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-amber-50/50 p-4 rounded-xl border border-amber-100 text-xs space-y-1">
+                            <span class="font-bold text-amber-950 block"><i class="fa-solid fa-align-right text-amber-600 me-1"></i> استدلال و جمع‌بندی گروهی:</span>
+                            <p class="text-slate-800 leading-relaxed">${sub.reasoning || 'استدلالی ثبت نشده است.'}</p>
+                        </div>
+
+                        <!-- Teacher Score & Feedback Section -->
+                        <div class="bg-indigo-50/60 p-4 rounded-xl border border-indigo-200 space-y-3">
+                            <h4 class="font-bold text-indigo-950 text-xs flex items-center gap-1.5">
+                                <i class="fa-solid fa-pen-to-square text-indigo-600"></i> ارزیابی و ثبت نمره استاد:
+                            </h4>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                                <div>
+                                    <label class="block font-semibold text-slate-700 mb-1">نمره گروه (از ۲۰):</label>
+                                    <input type="number" id="grade-score-${sc.groupId}" value="${sub.teacherScore || ''}" min="0" max="20" step="0.5" placeholder="مثلاً: ۱۸.۵" class="w-full p-2.5 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 font-bold text-indigo-900">
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <label class="block font-semibold text-slate-700 mb-1">بازخورد استاد به گروه:</label>
+                                    <input type="text" id="grade-feedback-${sc.groupId}" value="${sub.teacherFeedback || ''}" placeholder="بازخورد و نکات اصلاحی..." class="w-full p-2.5 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                                </div>
+                            </div>
+                            <button onclick="saveTeacherGrade(${sc.groupId})" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs py-2 px-4 rounded-lg shadow transition">
+                                ثبت نمره و بازخورد برای گروه ${sc.groupId}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function saveTeacherGrade(groupId) {
+            const scoreVal = document.getElementById(`grade-score-${groupId}`).value;
+            const feedbackVal = document.getElementById(`grade-feedback-${groupId}`).value;
+
+            const subs = getGroupSubmissions();
+            if (subs[groupId]) {
+                subs[groupId].teacherScore = scoreVal;
+                subs[groupId].teacherFeedback = feedbackVal;
+                localStorage.setItem('farhangian_group_submissions', JSON.stringify(subs));
+                alert(`نمره و بازخورد گروه ${groupId} با موفقیت ثبت شد.`);
+            }
+        }
+
+        function calculateRealLimits() {
+            const num = parseFloat(document.getElementById('rl-input-number').value);
+            const unit = parseFloat(document.getElementById('rl-input-unit').value);
+
+            if (isNaN(num)) return;
+
+            const halfUnit = unit / 2;
+            const lrl = num - halfUnit;
+            const url = num + halfUnit;
+
+            document.getElementById('rl-lrl').textContent = lrl.toLocaleString('fa-IR');
+            document.getElementById('rl-url').textContent = url.toLocaleString('fa-IR');
+        }
+
+        function runRoundingSimulator() {
+            const strVal = document.getElementById('round-input-val').value.trim();
+            const targetDec = parseInt(document.getElementById('round-target-place').value);
+            
+            const result = performRunyonRounding(strVal, targetDec);
+            const stepBox = document.getElementById('round-step-box');
+
+            stepBox.innerHTML = `
+                <div class="flex justify-between items-center border-b border-purple-200 pb-2">
+                    <span class="font-bold text-purple-900">نتیجه گرد شده:</span>
+                    <span class="font-mono text-base font-black text-purple-950 dir-ltr bg-white px-3 py-1 rounded-lg border border-purple-200">${result.finalVal}</span>
+                </div>
+                <div class="space-y-1 text-[11px] text-purple-900 pt-1">
+                    <p class="font-semibold">مراحل تحلیل طبق صفحه ۲۰ جزوه:</p>
+                    <p>• رقم در موضع گرد کردن ($D_${targetDec}$): <span class="font-mono font-bold">${result.targetDigit}</span></p>
+                    <p>• رقم بعد از موضع گرد کردن: <span class="font-mono font-bold">${result.nextDigit}</span></p>
+                    <p>• شرح قاعده اعمال شده: <span class="font-semibold">${result.ruleApplied}</span></p>
+                </div>
+            `;
+        }
+
+        function performRunyonRounding(valStr, decimals) {
+            const num = parseFloat(valStr);
+            if (isNaN(num)) return { finalVal: "نامعتبر", ruleApplied: "عدد ورودی صحیح نیست" };
+
+            const parts = valStr.split('.');
+            if (parts.length < 2 || parts[1].length <= decimals) {
+                return {
+                    finalVal: parseFloat(valStr).toFixed(decimals),
+                    targetDigit: "ندارد",
+                    nextDigit: "۰",
+                    ruleApplied: "تعداد ارقام اعشار کمتر یا برابر با موضع گرد کردن است."
+                };
+            }
+
+            const decPart = parts[1];
+            const targetDigit = parseInt(decPart[decimals - 1]);
+            const nextDigit = parseInt(decPart[decimals]);
+            const remainingDigits = decPart.substring(decimals + 1);
+
+            let ruleText = "";
+
+            if (nextDigit > 5) {
+                ruleText = "رقم بعد از موضع گرد کردن بیشتر از ۵ است -> ۱ واحد اضافه شد.";
+            } else if (nextDigit < 5) {
+                ruleText = "رقم بعد از موضع گرد کردن کمتر از ۵ است -> بدون تغییر باقی ماند.";
+            } else {
+                const hasNonZeroRem = remainingDigits.split('').some(d => d !== '0');
+                if (hasNonZeroRem) {
+                    ruleText = "بعد از رقم ۵، ارقام غیرصفر دیگری وجود دارند (عملاً > ۵) -> ۱ واحد اضافه شد.";
+                } else {
+                    if (targetDigit % 2 !== 0) {
+                        ruleText = `رقم بعد ۵ است و رقم قبل از ۵ فرد می‌باشد (${targetDigit}) -> ۱ واحد اضافه شد تا زوج شود.`;
+                    } else {
+                        ruleText = `رقم بعد ۵ است و رقم قبل از ۵ زوج می‌باشد (${targetDigit}) -> بدون تغییر باقی ماند.`;
+                    }
+                }
+            }
+
+            let roundedNum;
+            if (nextDigit > 5 || (nextDigit === 5 && (remainingDigits.split('').some(d => d !== '0') || targetDigit % 2 !== 0))) {
+                const factor = Math.pow(10, decimals);
+                roundedNum = (Math.floor(num * factor) + 1) / factor;
+            } else {
+                const factor = Math.pow(10, decimals);
+                roundedNum = Math.floor(num * factor) / factor;
+            }
+
+            return {
+                finalVal: roundedNum.toFixed(decimals),
+                targetDigit: targetDigit,
+                nextDigit: nextDigit,
+                ruleApplied: ruleText
+            };
+        }
+
+        function renderQuiz() {
+            const list = document.getElementById('quiz-questions-list');
+            if (!list) return;
+
+            list.innerHTML = QUIZ_QUESTIONS.map((q, idx) => `
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                    <div class="flex items-start gap-3">
+                        <span class="w-7 h-7 rounded-lg bg-purple-100 text-purple-700 font-bold flex items-center justify-center text-xs shrink-0">${idx + 1}</span>
+                        <p class="font-bold text-slate-800 text-xs sm:text-sm pt-1">${q.q}</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                        ${q.options.map((opt, oIdx) => `
+                            <button onclick="answerQuiz(${idx}, ${oIdx})" id="quiz-btn-${idx}-${oIdx}" class="text-right p-3 rounded-xl border border-slate-200 hover:bg-slate-50 transition text-slate-700">
+                                ${oIdx + 1}) ${opt}
+                            </button>
+                        `).join('')}
+                    </div>
+
+                    <div id="quiz-exp-${idx}" class="hidden p-3 bg-purple-50 rounded-xl text-xs text-purple-900 border border-purple-200">
+                        <span class="font-bold block mb-0.5">پاسخ تشریحی:</span>
+                        <p>${q.explanation}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function answerQuiz(qIdx, oIdx) {
+            const q = QUIZ_QUESTIONS[qIdx];
+            quizUserAnswers[qIdx] = oIdx;
+
+            q.options.forEach((_, optI) => {
+                const btn = document.getElementById(`quiz-btn-${qIdx}-${optI}`);
+                if (btn) btn.className = "text-right p-3 rounded-xl border transition text-xs opacity-60 bg-white border-slate-200";
+            });
+
+            const selectedBtn = document.getElementById(`quiz-btn-${qIdx}-${oIdx}`);
+            const expBox = document.getElementById(`quiz-exp-${qIdx}`);
+            if (expBox) expBox.classList.remove('hidden');
+
+            if (oIdx === q.ans) {
+                if (selectedBtn) selectedBtn.className = "text-right p-3 rounded-xl border font-bold text-xs bg-emerald-50 border-emerald-500 text-emerald-900";
+            } else {
+                if (selectedBtn) selectedBtn.className = "text-right p-3 rounded-xl border font-bold text-xs bg-rose-50 border-rose-500 text-rose-900";
+                const correctBtn = document.getElementById(`quiz-btn-${qIdx}-${q.ans}`);
+                if (correctBtn) correctBtn.className = "text-right p-3 rounded-xl border font-bold text-xs bg-emerald-50 border-emerald-500 text-emerald-900";
+            }
+
+            let correctCount = 0;
+            Object.keys(quizUserAnswers).forEach(k => {
+                if (quizUserAnswers[k] === QUIZ_QUESTIONS[k].ans) correctCount++;
+            });
+            const displayEl = document.getElementById('quiz-score-display');
+            if (displayEl) displayEl.textContent = `${correctCount}/${QUIZ_QUESTIONS.length}`;
+        }
+
+        // Initialize App
+        window.onload = function() {
+            selectScaleCard('nominal');
+            renderGroupScenariosMenu();
+            calculateRealLimits();
+            runRoundingSimulator();
+            renderQuiz();
+        };
+    </script>
+</body>
+</html>
